@@ -4,99 +4,112 @@
 
 The objectives of this assignment are:
 
-1. To derive the backpropagation equation for the weight matrix \(W_3\).
-2. To train a three-linear-layer neural network on the MNIST dataset and report its classification accuracy.
+1. Derive the backpropagation equation for the weight matrix \(W_3\).
+2. Train a three-linear-layer neural network on the MNIST dataset and report its classification accuracy.
 
 ## 2. Backpropagation for \(W_3\)
 
 For the third linear layer,
 
-\[
-z_3=W_3h_2+b_3
-\]
+```math
+z_3 = W_3 h_2 + b_3
+```
 
 where \(h_2\) is the output of the previous layer.
 
 Using the chain rule,
 
-\[
+```math
 \frac{\partial L}{\partial W_3}
 =
 \frac{\partial L}{\partial z_3}
-\frac{\partial z_3}{\partial W_3}.
-\]
+\frac{\partial z_3}{\partial W_3}
+```
 
 Since
 
-\[
-\frac{\partial z_3}{\partial W_3}=h_2^T,
-\]
+```math
+\frac{\partial z_3}{\partial W_3} = h_2^T
+```
 
 we obtain
 
-\[
+```math
 \boxed{
 \frac{\partial L}{\partial W_3}
 =
-\frac{\partial L}{\partial z_3}h_2^T
+\frac{\partial L}{\partial z_3} h_2^T
 }
-\]
+```
 
-For Softmax with Cross-Entropy Loss,
 
-\[
-\frac{\partial L}{\partial z_3}=p-y,
-\]
+## 3. Neural Network
 
-therefore,
+The MNIST dataset contains handwritten digit images with 10 classes, from 0 to 9.
 
-\[
-\boxed{
-\frac{\partial L}{\partial W_3}
-=
-(p-y)h_2^T
-}
-\]
+Each image is flattened into a 784-dimensional vector as I designed.
 
-In PyTorch, this gradient is automatically calculated by `loss.backward()`.
+The neural network structure is:
 
-## 3. Neural Network and Training
+```text
+784 -> 196 -> 49 -> 10
+```
 
-The MNIST dataset contains \(28\times28\) grayscale handwritten digit images with 10 classes, from 0 to 9. Each image is flattened into a 784-dimensional vector.
+The three linear layers are:
 
-The three-linear-layer network is
+```python
+self.layer1 = nn.Linear(784, 196)
+self.layer2 = nn.Linear(196, 49)
+self.layer3 = nn.Linear(49, 10)
+```
 
-\[
-784 \rightarrow 196 \rightarrow 49 \rightarrow 10.
-\]
+ReLU activation is applied after the first and second linear layers.
 
-ReLU activation is applied after the first and second linear layers. The final layer outputs 10 logits corresponding to the 10 digit classes.
+## 4. Training Settings
 
-The training settings are:
+| Parameter | Value |
+|---|---|
+| Dataset | MNIST |
+| Loss Function | CrossEntropyLoss |
+| Optimizer | SGD |
+| Learning Rate | 0.01 |
+| Momentum | 0.9 |
+| Batch Size | 64 |
+| Epochs | 10 |
 
-- Loss function: Cross-Entropy Loss
-- Optimizer: SGD
-- Learning rate: 0.01
-- Momentum: 0.9
-- Batch size: 64
-- Number of epochs: 10
+## 5. Training Result
 
-## 4. Result
+The training loss decreased continuously:
 
-The training loss decreased continuously during training:
+```text
+Epoch: 1  Loss: 0.537
+Epoch: 2  Loss: 0.192
+Epoch: 3  Loss: 0.129
+Epoch: 4  Loss: 0.098
+Epoch: 5  Loss: 0.077
+Epoch: 6  Loss: 0.064
+Epoch: 7  Loss: 0.055
+Epoch: 8  Loss: 0.045
+Epoch: 9  Loss: 0.037
+Epoch: 10 Loss: 0.032
+```
 
-\[
-0.537 \rightarrow 0.192 \rightarrow \cdots \rightarrow 0.032.
-\]
+Final test accuracy:
 
-After 10 epochs, the model achieved:
+```text
+Test Accuracy: 97.86%
+```
 
-\[
-\boxed{\text{Test Accuracy}=97.86\%}
-\]
+Therefore,
 
-The decreasing training loss shows that the network learned effectively from the MNIST training data.
+```math
+\boxed{\text{Test Accuracy} = 97.86\%}
+```
 
-## 5. Conclusion
+## 6. Conclusion
 
-A three-linear-layer neural network was successfully trained on the MNIST dataset. After 10 epochs, the model achieved a test accuracy of **97.86%**. The experiment also demonstrates how backpropagation computes the gradient of \(W_3\) and how PyTorch performs this process automatically during training.
+A three-linear-layer neural network was successfully trained on the MNIST dataset.
+
+The training loss decreased from **0.537** to **0.032**, and the final test accuracy reached **97.86%**.
+
+The experiment also demonstrates how the gradient of \(W_3\) is obtained through backpropagation and how PyTorch automatically performs this calculation using `loss.backward()`.
